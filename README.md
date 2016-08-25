@@ -1,5 +1,5 @@
 ---
-title: "Presentaion for: R – The Programming Language for Big-Data?"
+title: "R – The Programming Language for Big-Data?"
 author: 'Vitali Dettling'
 date: "20/Juni/2016"
 ---
