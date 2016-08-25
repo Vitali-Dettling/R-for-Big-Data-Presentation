@@ -1,0 +1,299 @@
+---
+title: "R – The Programming Language for Big-Data?"
+author: 'Vitali Dettling'
+date: "20/Juni/2016"
+output: ioslides_presentation
+---
+<style type="text/css">
+
+/* Slide Text */
+li{
+  font-size: 28px;
+}
+
+strong{
+  font-size: 36px;
+  color: rgb(70,70,70);
+}
+
+div.ref {
+  font-size: 12px;
+  color: rgb(80,80,80);
+  font-style: italic;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+div.centered{
+    position: absolute;
+    left: 0;
+    top: 15%;
+    width: 100%;
+    text-align: center;
+}
+
+h3{
+  font-size: 28px;
+  color: rgb(70,70,70);
+}
+
+div.tableHack{
+font-size: 22px;
+color: rgb(70,70,70);
+text-align: left;
+}
+
+table.table2{
+table-layout: fixed;
+width: 100%;
+text-align: left;
+}
+
+li{
+color: rgb(70,70,70);
+}
+
+li.li1{
+color: rgb(70,70,70);
+line-height: 55px;
+}
+
+</style>
+
+## Agenda
+
+<br/>
+<ul>
+  <li><strong> What is R? </strong></li> 
+  <li><strong> Popularity and Syntax of R</strong></li>
+  <li><strong> Comparison with C++ </strong></li>
+</ul>
+
+<br/>
+
+<ul>
+  <li> What is Big-Data? </li>
+  <li> Advancement of R </li> 
+  <li> Hadoop Example </li>  
+</ul>
+
+## Popularity of R
+
+```{r, echo=F, fig.height=4, fig.width=8, fig.align='center'}
+toPlot <- cbind(Others=c(60),Cpp=c(40),Excel=c(50),Python=c(70),
+SPSS=c(80),Weka=c(80),SAS=c(140),Matlab=c(220),R=c(540))
+
+barplot(toPlot, space=1, las=2, horiz=TRUE, xlim=c(0,600)) 
+mtext("Number of Users", side=1, line=3.1, cex=1.4)
+```
+
+<div class="ref">
+Reference: kaggle: "Software, Tools Used By Competitors" URL:  https://www.kaggle.com/wiki/Software
+</div>
+
+## R Syntax 
+
+```{r, echo=F}
+library(Rcpp)
+library(microbenchmark)
+```
+```{r, echo=T}
+performanceR = function()
+{
+  x <- sample.int(n=1e6, size=1e6, replace=TRUE)
+  y <- sum(as.numeric(x))
+  return(y)
+}
+```
+<br/>
+<table>
+<tr> 
+<th><div class="tableHack">sample.int</div></th>
+<th><div class="tableHack">(n, size = n, replace = FALSE)</div></th>
+</tr>
+<tr>
+<th><div class="tableHack">n <br/> size <br/> replace</div></th>
+<th><div class="tableHack">a positive number, the number of items to choose from. <br/> a non-negative integer giving the number of items to choose. <br/> Should sampling be with replacement?</div></th>
+</tr>
+</table>
+
+<div class="ref">
+Reference: CRAN: "sample {base}, Random Samples and Permutations" URL: https://stat.ethz.ch/R-manual/R-devel/library/base/html/sample.html
+</div>
+
+## C++ Syntax
+
+```{r, echo=T}
+performanceR2 = function(){
+  y2 = 0
+    for(i in 1:1e6){
+      y2 = y2 + sample.int(n=1e6, size=1,  replace=TRUE)
+    }
+  return(y2)
+}
+```
+```{r, echo=T}
+cppFunction('int performanceCpp(){
+  int s = 0;
+    for(int i = 0; i <= 1e6; i++)  {
+      s = s + rand() % 1000000;
+    } 
+  return s;
+}')
+```
+## R vs. C++
+
+```{r, echo=F, fig.width = 8.5, fig.height = 4.5, fig.align='center'}
+res2 = microbenchmark(
+  performanceCpp(),
+  performanceR2(),
+  performanceR(),
+  times = 100L,
+  unit = "ms"
+)
+medianOnly <- summary(res2)
+median = medianOnly$median
+toPlot2 = cbind('R (good)'=round(median[3], digits = 0),
+                'R (naive)'=round(median[2], digits = 0),
+                'c++'=round(median[1], digits = 0))
+val = c(round(median[3], digits = 0), round(median[2], digits = 0), round(median[1], digits = 0))
+mp = barplot(toPlot2, las=1, horiz = F, ylim=c(0,6000), cex.names=1.5)
+
+text(mp, val, labels = val, pos = 3, col = "blue", cex=1.5)
+mtext("Milliseconds", side=2, line=3.1, cex=1.4)
+mtext("Average Value", side=1, line=3.1, cex=1.4)
+```
+
+## Agenda
+
+<br/>
+<ul>
+  <li> What is R? </li> 
+  <li> Popularity and Syntax of R</li>
+  <li> Comparison with C++ </li>
+</ul>
+
+<br/>
+
+<ul>
+  <li><strong> What is Big-Data? </strong></li>
+  <li><strong> Advancement of R </strong></li> 
+  <li><strong> Hadoop Example </strong></li>  
+</ul>
+
+## Big-Data Numbers
+
+<br/>
+<br/>
+<ul>
+  <li class="li1"><strong> Facebook: <span style="color:blue">40 PB</span> of Data </strong></li> 
+  <li class="li1"><strong> ebay: <span style="color:blue">40 PB</span> of Data </strong></li>
+  <li class="li1"><strong> Yahoo!: <span style="color:blue">60 PB</span> of Data  </strong></li>
+  <li class="li1"><strong> Twitter: <span style="color:blue">8 TB/day</span> of Data </strong></li>
+</ul>
+
+<div class="ref">
+Reference: Big Data Analytics with R and Hadoop: "Getting information about popular organizations that hold Big Data" ISBN: 978-1782163282
+</div>
+
+## R Packages in CRAN 
+
+```{r, echo=F, fig.width = 8.5, fig.height = 4.5, fig.align='center'}
+library(ggplot2)
+
+Pakete = c(100,150,200,300,600,900,1350,1650,2100,2850,3500,4200,5000,6400)
+Jahre = c(2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015)
+
+plot(x=Jahre,y=Pakete,type="b",xlim=c(2002,2016),ylim=c(0,8000),cex.lab=1.3,
+cex.axis=1.5,col="blue",pch=21,bg="blue",xlab="Years",ylab="Number of R Packages")
+```
+
+<div class="ref">
+Quelle: The Popularity of Data Analysis Software: "Growth in Capability" URL: http://r4stats.com/articles/popularity/
+</div>
+
+## Extension of R
+
+<center> <img src="./Presi-figure/final.png" width="550"> </center>
+
+<div class="ref">
+Reference: wiki: "R (programming language)" URL:  https://en.wikipedia.org/wiki/R_(programming_language)
+
+Reference: GitHub: "RevolutionAnalytics/RHadoop" URL:  https://github.com/RevolutionAnalytics/RHadoop/wiki
+
+Reference: renjin: "Renjin is a JVM-based interpreter for the R language for statistical computing" URL: http://docs.renjin.org/en/latest/introduction.html
+
+Reference: pqR: "RpqR - a pretty quick version of R" URL: http://www.pqr-project.org/
+
+Reference: Oracle: "R Technologies" URL:  https://community.oracle.com/community/business_intelligence/data_warehousing/r
+</div>
+
+## Hadoop Example
+
+<center> <img src="./Presi-figure/Hadoop.png" width="500"> </center>
+
+<div class="ref">
+Reference: Apache: "Welcome to Apache™ Hadoop®!" URL: http://hadoop.apache.org/
+</div>
+
+## Hadoop Example Video
+
+<iframe width="500" height="281" src="https://www.youtube.com/embed/Hc4Cjpbu314?rel=0" frameborder="0" allowfullscreen></iframe>
+
+## Summary
+
+<table class="table2">
+<tr>
+<th><strong>Advantages</strong></th>
+<th><strong>Disadvantages</strong></th>
+</tr>
+<tr>
+<th><div class="tableHack">Open Source</div></th>
+<th><div class="tableHack">Performance</div></th>
+</tr>
+<tr>
+<th><div class="tableHack">Big Community Support</div></th>
+<th><div class="tableHack">Costly Memory</div></th>
+</tr>
+<tr>
+<th><div class="tableHack">Over 6000 packages and growing</div></th>
+<th><div class="tableHack">Single-Threaded</div></th>
+</tr>
+<tr>
+<th><div class="tableHack">Single syntax for calling other languages</div></th>
+<th><div class="tableHack">Original not supported for Big-Data</div></th>
+</tr>
+<tr>
+<th><div class="tableHack">Extension of R for Big-Data</div></th>
+<th><div class="tableHack">No support for all R packages</div></th>
+</tr>
+<tr>
+<th><div class="tableHack">Very easy to learn</div></th>
+<th></th>
+</tr>
+</table>
+
+## {}
+
+<div class="centered">
+  <h2 style="font-size:80px;"> Worth reading! </h2>
+</div>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<table class="table2">
+<tr>
+<th><center><img src="./Presi-figure/Advanced R.jpg" height="300"></center></th>
+<th><center><img src="./Presi-figure/RHadoop.jpg" height="300"></center></th>
+</tr>
+</table>
+
+<div class="ref">
+Reference: Advanced R: ISBN: 978-1466586963 URL: http://adv-r.had.co.nz/
+
+Reference: Big Data Analytics with R and Hadoop: Understanding data analytics problems ISBN: 978-1782163282 
+</div>
